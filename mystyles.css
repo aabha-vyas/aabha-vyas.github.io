@@ -1,0 +1,44 @@
+h1{
+  color: #008080;
+  font-size: 60px;
+  padding-top: 40px;
+  text-align: center;
+  font-family: Impact,Haettenschweiler,Franklin Gothic Bold,Charcoal,Helvetica Inserat,Bitstream Vera Sans Bold,Arial Black,sans serif;
+}
+
+h2{
+  color: #008080;
+  font-size:25px;
+  text-align: center;
+  font-family: Impact,Haettenschweiler,Charcoal,Helvetica Inserat,Bitstream Vera Sans Bold,Arial Black,sans serif;
+}
+
+h6{
+  color: white;
+  font-size: 25px;
+  position: fixed;
+  bottom: 10px;
+}
+
+
+div.fixed {
+
+  border: 3px solid #8AC007;
+}
+
+
+ div.gallery {
+  margin: 5px;
+  border: 1px solid #ccc;
+  float: left;
+}
+
+div.gallery img {
+  width: 100%;
+  height: auto;
+}
+
+.test{
+  height:50px;
+  width:100px;
+}
