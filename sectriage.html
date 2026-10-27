@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SecTriage | Aabha Vyas</title>
+<meta name="description" content="SecTriage: an evaluation platform for tool-using AI agents.">
+<script src="theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <a href="index.html">home</a>
+  <a href="projects.html" aria-current="page">projects</a>
+  <a href="gallery.html">gallery</a>
+  <button id="themeBtn" aria-label="Toggle light and dark mode"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button>
+</nav>
+<main class="col">
+  <article>
+    <div class="page-head">
+      <h1>SecTriage</h1>
+      <p class="sub"><span class="chip">in progress</span>an evaluation platform for tool-using agents &middot; Python 3.12 &middot; started October 2026</p>
+    </div>
+
+    <p>I'm building a platform that runs AI agents on security code review and, more importantly, measures how well they do it. An agent reads a small codebase, uses tools to search and read files, and reports vulnerabilities with the file and line. A scorer then compares those reports against a known answer key.</p>
+    <p>I chose security triage because the answers are checkable. A bug is either in the code or it isn't, so I can score the agent instead of judging it by feel.</p>
+
+    <h3 class="label">how it works</h3>
+    <div class="box">
+      <h3 class="label">the agent</h3>
+      <p>A loop in plain Python with a budget on steps, time and cost, typed contracts for every tool call, and a recorded stop reason for every run. An append-only log captures each step's model output, tool call, result, tokens and cost, so any run can be replayed and compared.</p>
+    </div>
+    <div class="box">
+      <h3 class="label">the evaluation</h3>
+      <p>This is where I spent most of my effort. I wrote three test applications with ten planted bugs, including ones that cross files, plus decoy code that looks dangerous but is safe, and one application with no bugs at all to catch false alarms. I locked those files with hashes so I can't quietly tune toward them, and an independent review confirmed the answer key was complete.</p>
+    </div>
+
+    <h3 class="label">results so far</h3>
+    <div class="stats">
+      <div class="stat"><div class="n">92-100%</div><div class="l">of planted bugs found</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">false positives across 20 runs</div></div>
+      <div class="stat"><div class="n">~$0.005</div><div class="l">per run, small and cheap model</div></div>
+    </div>
+    <div class="box alt">
+      <h3 class="label">agent vs. a static scanner, same targets</h3>
+      <div class="bar-row"><span>agent (read-only tools)</span><div class="track"><div class="fill agent">92-100%</div></div></div>
+      <div class="bar-row"><span>static scanner</span><div class="track"><div class="fill scan">30%</div></div></div>
+      <p class="note">I'd read this comparison carefully. The targets are small, the scanner ran with a few default rule packs, and I haven't tested stronger or weaker settings yet.</p>
+    </div>
+
+    <h3 class="label">next</h3>
+    <p>Varying the step budget and the model to see where the agent breaks. A score that is always perfect doesn't tell you anything.</p>
+    <!-- TODO: after the sweep, replace this box with a table or chart of recall and cost by model and step budget,
+         plus two or three short examples of where the agent failed and why. -->
+    <div class="todo"><b>coming soon:</b> results from the step-budget and model sweep, with failure examples.</div>
+
+    <h3 class="label">still in progress</h3>
+    <ul class="clean">
+      <li>A Docker sandbox so the agent can run commands safely, with no network and resource limits.</li>
+      <li>A durable job queue with workers, retries, and replay from the event log, so a crashed run can be recovered and reproduced.</li>
+    </ul>
+
+    <h3 class="label">why I built it this way</h3>
+    <p>At CME I work on messaging infrastructure, so I already care about ordering, replay, latency and failure recovery. SecTriage applies those habits to AI workloads: treat measurement as the product, keep held-out data, and be honest about limits.</p>
+
+    <!-- TODO: replace REPO_URL with the SecTriage repository link -->
+    <p><a href="REPO_URL">view the code</a></p>
+    <a class="back" href="projects.html">&larr; back to projects</a>
+  </article>
+  <footer>&copy; 2026 Aabha Vyas</footer>
+</main>
+</body>
+</html>
