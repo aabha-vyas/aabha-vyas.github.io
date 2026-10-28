@@ -153,3 +153,7 @@ footer { padding: 30px 0 50px; color: var(--faint); font-size: 13px; border-top:
 }
 @media (max-width: 480px) { .grid { column-count: 1; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+table.results { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.results th, table.results td { text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); }
+table.results th { color: var(--dim); font-weight: 400; }

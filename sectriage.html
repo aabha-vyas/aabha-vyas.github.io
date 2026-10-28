@@ -21,52 +21,70 @@
   <article>
     <div class="page-head">
       <h1>SecTriage</h1>
-      <p class="sub"><span class="chip">in progress</span>an evaluation platform for tool-using agents &middot; Python 3.12 &middot; started October 2026</p>
+      <p class="sub"><span class="chip">in progress</span>a security-triage agent and eval harness &middot; Python 3.12 &middot; started October 2026</p>
     </div>
 
-    <p>I'm building a platform that runs AI agents on security code review and, more importantly, measures how well they do it. An agent reads a small codebase, uses tools to search and read files, and reports vulnerabilities with the file and line. A scorer then compares those reports against a known answer key.</p>
-    <p>I chose security triage because the answers are checkable. A bug is either in the code or it isn't, so I can score the agent instead of judging it by feel.</p>
+    <p>I'm building an agent that triages code for security findings, and an eval harness that scores it. The agent reads a local, intentionally vulnerable codebase with two tools, <code>read_file</code> and <code>search_code</code>, and reports findings in five classes: SQL injection, XSS, path traversal, command injection and hardcoded secrets. Every report is checked against a ground-truth file.</p>
+    <p>I chose security triage because the answers are checkable. A bug is either in the code at a known location or it isn't, so I can measure precision, recall and cost per run instead of judging the agent by feel.</p>
 
     <h3 class="label">how it works</h3>
     <div class="box">
       <h3 class="label">the agent</h3>
-      <p>A loop in plain Python with a budget on steps, time and cost, typed contracts for every tool call, and a recorded stop reason for every run. An append-only log captures each step's model output, tool call, result, tokens and cost, so any run can be replayed and compared.</p>
+      <p>A loop in plain Python with a budget on steps, cost and time. Every step appends one event to a JSONL log with the model output, tool call, result, tokens and cost, and every run records why it stopped.</p>
     </div>
     <div class="box">
       <h3 class="label">the evaluation</h3>
-      <p>This is where I spent most of my effort. I wrote three test applications with ten planted bugs, including ones that cross files, plus decoy code that looks dangerous but is safe, and one application with no bugs at all to catch false alarms. I locked those files with hashes so I can't quietly tune toward them, and an independent review confirmed the answer key was complete.</p>
+      <p>Four small seeded apps with planted bugs, decoy code that looks dangerous but is safe, and one app with no bugs to catch false alarms. The target files are frozen with SHA-256 hashes and a test fails if any file changes, so I can't quietly tune toward them. A baseline gate refuses to compare runs whose setup differs, instead of reporting a fake regression.</p>
+    </div>
+    <div class="box">
+      <h3 class="label">the infrastructure</h3>
+      <p>A SQLite task queue with a worker pool, lease tokens and an atomic ack, so a worker that loses its lease can't write a result. A demo kills a worker mid-task and the run still finishes with one result row after two attempts. Replay from the event log serves recorded model turns with no API call. Commands can run in a Docker sandbox with no network, a read-only filesystem, dropped capabilities and CPU, memory and process limits.</p>
     </div>
 
     <h3 class="label">results so far</h3>
+    <p>Model <code>claude-haiku-5-5</code>, prompt v1, no sandbox, 5 runs per row, 5 planted bugs per target. All 40 runs finished cleanly with no false positives.</p>
     <div class="stats">
-      <div class="stat"><div class="n">92-100%</div><div class="l">of planted bugs found</div></div>
-      <div class="stat"><div class="n">0</div><div class="l">false positives across 20 runs</div></div>
-      <div class="stat"><div class="n">~$0.005</div><div class="l">per run, small and cheap model</div></div>
+      <div class="stat"><div class="n">92-100%</div><div class="l">of planted bugs found at 30 steps</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">false positives across 40 runs</div></div>
+      <div class="stat"><div class="n">~$0.0045</div><div class="l">per run at 30 steps, small and cheap model</div></div>
     </div>
+
     <div class="box alt">
-      <h3 class="label">agent vs. a static scanner, same targets</h3>
-      <div class="bar-row"><span>agent (read-only tools)</span><div class="track"><div class="fill agent">92-100%</div></div></div>
-      <div class="bar-row"><span>static scanner</span><div class="track"><div class="fill scan">30%</div></div></div>
-      <p class="note">I'd read this comparison carefully. The targets are small, the scanner ran with a few default rule packs, and I haven't tested stronger or weaker settings yet.</p>
+      <h3 class="label">recall by step budget</h3>
+      <table class="results">
+        <tr><th>max steps</th><th>ledger_api</th><th>notes_portal</th></tr>
+        <tr><td>6</td><td>0.20</td><td>0.28</td></tr>
+        <tr><td>10</td><td>0.36</td><td>0.36</td></tr>
+        <tr><td>15</td><td>0.44</td><td>0.40</td></tr>
+        <tr><td>30</td><td>1.00</td><td>0.92</td></tr>
+      </table>
+      <p class="note">Precision was 1.00 in every row. At 6, 10 and 15 steps every run used its whole budget, so the agent was cut off before it finished. At 30 steps no run did, averaging about 18 steps. <code>ledger_api</code> was used to write the v2 prompt below; <code>notes_portal</code> was not used for tuning.</p>
     </div>
 
-    <h3 class="label">next</h3>
-    <p>Varying the step budget and the model to see where the agent breaks. A score that is always perfect doesn't tell you anything.</p>
-    <!-- TODO: after the sweep, replace this box with a table or chart of recall and cost by model and step budget,
-         plus two or three short examples of where the agent failed and why. -->
-    <div class="todo"><b>coming soon:</b> results from the step-budget and model sweep, with failure examples.</div>
+    <div class="box alt">
+      <h3 class="label">agent vs. a static scanner, same ground truth</h3>
+      <div class="bar-row"><span>agent, 30 steps</span><div class="track"><div class="fill agent">92-100%</div></div></div>
+      <div class="bar-row"><span>Semgrep</span><div class="track"><div class="fill scan">30%</div></div></div>
+      <p class="note">Semgrep 1.182.1 with four rule packs found 3 of 10 planted bugs across three targets, with 1 false positive on a decoy. It caught command injection but missed every SQL injection, path traversal and hardcoded secret. Read this carefully: Semgrep was one deterministic run over three targets and the agent rows are 5 runs per target, so the rows are not like for like.</p>
+    </div>
 
-    <h3 class="label">still in progress</h3>
+    <h3 class="label">a prompt change that didn't ship</h3>
+    <p>I tried a v2 prompt with one added instruction: report each finding as soon as it is verified. I wrote five success criteria before running it. It met 2 of 5 on <code>ledger_api</code> and 1 of 5 on <code>notes_portal</code>, so v1 stayed the default. At 15 steps recall rose from 0.44 to 0.72 and from 0.40 to 0.76, but at 30 steps <code>notes_portal</code> recall fell from 0.92 to 0.84 and one of the 40 runs had a false positive.</p>
+
+    <h3 class="label">limits</h3>
     <ul class="clean">
-      <li>A Docker sandbox so the agent can run commands safely, with no network and resource limits.</li>
-      <li>A durable job queue with workers, retries, and replay from the event log, so a crashed run can be recovered and reproduced.</li>
+      <li>Four small seeded apps with at most 5 planted bugs each, one model and 5 runs per cell. These numbers say nothing about real codebases.</li>
+      <li>Only the five bug classes are scored. Patch quality isn't measured yet.</li>
+      <li>The eval runs used no sandbox. The sandbox is tested, but no run has had the model choose to use it on its own.</li>
     </ul>
 
-    <h3 class="label">why I built it this way</h3>
-    <p>At CME I work on messaging infrastructure, so I already care about ordering, replay, latency and failure recovery. SecTriage applies those habits to AI workloads: treat measurement as the product, keep held-out data, and be honest about limits.</p>
+    <h3 class="label">next</h3>
+    <p>Sweeping the model as well as the step budget, and running the agent through the sandbox on its own, to see where it breaks. A score that is always perfect doesn't tell you anything.</p>
 
-    <!-- TODO: replace REPO_URL with the SecTriage repository link -->
-    <p><a href="REPO_URL">view the code</a></p>
+    <h3 class="label">why I built it this way</h3>
+    <p>At CME I work on messaging infrastructure, so I already care about ordering, replay, latency and failure recovery. SecTriage applies those habits to AI workloads: treat measurement as the product, keep frozen data, and be honest about limits.</p>
+
+    <p><a href="https://github.com/aabha-vyas/sectriage">view the code</a></p>
     <a class="back" href="projects.html">&larr; back to projects</a>
   </article>
   <footer>&copy; 2026 Aabha Vyas</footer>
