@@ -56,14 +56,6 @@ nav {
 nav a { color: var(--dim); text-decoration: none; font-size: 16px; }
 nav a:hover { color: var(--text); }
 nav a[aria-current="page"] { color: var(--text); font-weight: 700; }
-#themeBtn {
-  background: none; border: 0; padding: 4px; cursor: pointer; color: var(--dim); line-height: 0;
-}
-#themeBtn:hover { color: var(--text); }
-#themeBtn svg { width: 20px; height: 20px; }
-#themeBtn .moon { display: none; }
-[data-theme="light"] #themeBtn .sun { display: none; }
-[data-theme="light"] #themeBtn .moon { display: inline; }
 
 .col { width: min(680px, calc(100% - 40px)); margin: 0 auto; }
 .wide { width: min(1080px, calc(100% - 40px)); margin: 0 auto; }
