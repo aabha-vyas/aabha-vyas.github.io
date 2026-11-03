@@ -5,7 +5,6 @@ var photos = [
   { src: 'assets/gallery/img_4290.jpg', place: 'Barcelona', year: '2024' },
   { src: 'assets/gallery/img_7870.jpg', place: 'Colorado', year: '2025' },
   { src: 'assets/gallery/img_3994.jpg', place: 'Banff', year: '2025' },
-  { src: 'assets/gallery/r0002987.jpg', place: 'Banff', year: '2025' },
   { src: 'assets/gallery/r0003056.jpg', place: 'Banff', year: '2025' },
   { src: 'assets/gallery/r0003095.jpg', place: 'Banff', year: '2025' },
   { src: 'assets/gallery/r0003560.jpg', place: 'Banff', year: '2025' },
