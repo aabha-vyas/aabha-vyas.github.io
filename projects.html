@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,11 +12,13 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<nav>
-  <a href="index.html">home</a>
-  <a href="projects.html" aria-current="page">projects</a>
-  <a href="gallery.html">gallery</a>
-</nav>
+<header class="site-head">
+  <a class="site-name" href="index.html">~ Aabha Vyas ~</a>
+  <nav>
+    <a href="projects.html" aria-current="page">projects</a>
+    <a href="gallery.html">photos</a>
+  </nav>
+</header>
 <main class="wide">
   <div class="page-head"><h1>projects</h1><p class="sub">things I'm building and have built.</p></div>
   <div class="cards">
@@ -40,6 +42,16 @@ when      up to 12.5%</pre>
       </div>
       <div class="card-meta" id="greenboinc">GreenBOINC <span class="tag">Fall 2025</span></div>
       <p class="card-desc">Carbon-aware scheduling for BOINC volunteer computing.</p>
+    </a>
+    <a class="card-link" href="recipes.html">
+      <div class="poster recipe">
+        <div class="name">Recipe Recommender</div>
+        <pre>tf-idf    title + ingredients
+match     cosine similarity
+rank      70% similar, 30% simpler</pre>
+      </div>
+      <div class="card-meta">Recipe Recommender <span class="tag">CS 410</span></div>
+      <p class="card-desc">Content-based recipe recommendations with NLP.</p>
     </a>
     <div>
       <div class="poster soon"><span>more soon</span></div>

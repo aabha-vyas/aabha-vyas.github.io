@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,11 +12,13 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<nav>
-  <a href="index.html">home</a>
-  <a href="projects.html">projects</a>
-  <a href="gallery.html" aria-current="page">gallery</a>
-</nav>
+<header class="site-head">
+  <a class="site-name" href="index.html">~ Aabha Vyas ~</a>
+  <nav>
+    <a href="projects.html">projects</a>
+    <a href="gallery.html" aria-current="page">photos</a>
+  </nav>
+</header>
 <main class="wide">
   <div class="page-head"><h1>gallery</h1><p class="sub">travel photos.</p></div>
   <div class="grid" id="grid"></div>
@@ -24,25 +26,8 @@
   <footer>&copy; 2026 Aabha Vyas</footer>
 </main>
 <div id="lightbox"><img alt=""><p></p></div>
+<script src="photos.js"></script>
 <script>
-  // Add your photos here. Put the image files in assets/gallery/ (about 1600px wide keeps pages fast).
-  // Example: { src: 'assets/gallery/lisbon.jpg', place: 'Lisbon', year: '2025' }
-  var photos = [
-    { src: 'assets/gallery/img_4290.jpg', place: 'Barcelona', year: '2024' },
-    { src: 'assets/gallery/img_7870.jpg', place: 'Colorado', year: '2025' },
-    { src: 'assets/gallery/img_3994.jpg', place: 'Banff', year: '2025' },
-    { src: 'assets/gallery/r0002987.jpg', place: 'Banff', year: '2025' },
-    { src: 'assets/gallery/r0003056.jpg', place: 'Banff', year: '2025' },
-    { src: 'assets/gallery/r0003095.jpg', place: 'Banff', year: '2025' },
-    { src: 'assets/gallery/r0003560.jpg', place: 'Banff', year: '2025' },
-    { src: 'assets/gallery/r0005207.jpg', place: 'Copenhagen', year: '2026' },
-    { src: 'assets/gallery/r0005241.jpg', place: 'Budapest', year: '2026' },
-    { src: 'assets/gallery/r0005331.jpg', place: 'Budapest', year: '2026' },
-    { src: 'assets/gallery/r0005426.jpg', place: 'Salzburg', year: '2026' },
-    { src: 'assets/gallery/r0005495.jpg', place: 'Hallstatt', year: '2026' },
-    { src: 'assets/gallery/r0005518.jpg', place: 'Hallstatt', year: '2026' },
-    { src: 'assets/gallery/r0005652.jpg', place: 'Werfen Ice Cave', year: '2026' }
-  ];
 
   var grid = document.getElementById('grid');
   var box = document.getElementById('lightbox');

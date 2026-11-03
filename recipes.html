@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe Recommender | Aabha Vyas</title>
+<meta name="description" content="A content-based recipe recommender using TF-IDF, cosine similarity and preference-aware ranking.">
+<script src="theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-head">
+  <a class="site-name" href="index.html">~ Aabha Vyas ~</a>
+  <nav>
+    <a href="projects.html">projects</a>
+    <a href="gallery.html">photos</a>
+  </nav>
+</header>
+<main class="col">
+  <article>
+    <div class="page-head">
+      <h1>Recipe Recommender</h1>
+      <p class="sub"><span class="chip">CS 410</span>content-based recommendation with NLP &middot; Python, scikit-learn, NLTK &middot; with Priscilla Yuan</p>
+    </div>
+
+    <p>Most recipe search matches keywords. We built a recommender that starts from a recipe you already like and finds similar ones, then re-ranks them by what you care about: fewer ingredients, fewer steps or a healthier dish.</p>
+    <p>It's a content-based recommender. Each recipe becomes a vector built from its own text, and recommendations come from how close those vectors are. No user ratings are needed.</p>
+
+    <h3 class="label">how it works</h3>
+    <div class="box">
+      <h3 class="label">1. clean the text</h3>
+      <p>We removed duplicate recipes, stripped measurements like "1 cup" and "3 tbsp," and joined multi-word ingredients into single tokens, so "soy sauce" becomes <code>soy_sauce</code> and isn't confused with other sauces. Cooking steps were split into sentences with NLTK.</p>
+    </div>
+    <div class="box">
+      <h3 class="label">2. turn recipes into vectors</h3>
+      <p>Each recipe's title and ingredients become a TF-IDF vector with single words and word pairs. TF-IDF boosts distinctive ingredients like salmon or ginger and downweights ones every recipe has, like salt and oil. A second TF-IDF vector covers the cooking steps.</p>
+    </div>
+    <div class="box">
+      <h3 class="label">3. find and rank matches</h3>
+      <p>Cosine similarity finds the 50 closest recipes, weighted 85% on ingredients and 15% on steps. Those candidates are then re-ranked by a blend of 70% similarity and 30% the user's preference, so a slightly less similar recipe can win if it's much simpler.</p>
+    </div>
+    <div class="box">
+      <h3 class="label">4. explain the results</h3>
+      <p>Each recommendation shows a 0&ndash;100 match score, the ingredients it adds that your recipe doesn't have, and a two-sentence summary of the steps. The summary picks the sentences with the highest TF-IDF scores.</p>
+    </div>
+
+    <h3 class="label">what we learned</h3>
+    <ul class="clean">
+      <li>Raw cosine scores for good matches only reached about 0.20&ndash;0.40, which looks weak to users, so we show a match bar and a 0&ndash;100 score instead.</li>
+      <li>Duplicates survived basic cleaning and filled results with the same recipe, so we also removed recipes with identical ingredients and steps after parsing.</li>
+      <li>Ingredient lists were messy: separators varied, and small items like salt and pepper often showed up in the directions instead.</li>
+    </ul>
+
+    <h3 class="label">limits</h3>
+    <ul class="clean">
+      <li>We judged recommendations by reading them. We didn't measure them against labeled data.</li>
+      <li>The healthiness score is a simple keyword count, not real nutrition data.</li>
+    </ul>
+
+    <a class="back" href="projects.html">&larr; back to projects</a>
+  </article>
+  <footer>&copy; 2026 Aabha Vyas</footer>
+</main>
+</body>
+</html>

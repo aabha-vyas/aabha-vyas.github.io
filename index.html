@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,30 +11,68 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
-<body class="home">
-<canvas id="ocean" aria-hidden="true"></canvas>
-<nav>
-  <a href="index.html" aria-current="page">home</a>
-  <a href="projects.html">projects</a>
-  <a href="gallery.html">gallery</a>
-</nav>
-<main class="home">
-  <div class="col home-text">
-    <p class="tagline">steady strokes,<br>deep water.</p>
-    <p>Hi, I'm Aabha.<br>
-    I'm a software engineer at CME Group, where I build high-throughput risk and trading infrastructure in C++, Kafka, and Python.<br>
-    I studied Computer Science at UIUC.<br>
-    I'm based in Chicago.<br>
-    Outside work, I build AI agent evaluation tools (<a href="sectriage.html">SecTriage</a>).</p>
-    <p class="links">
-      <!-- TODO: replace GITHUB_USERNAME with your GitHub username -->
-      <a href="https://github.com/aabha-vyas">github</a> /
-      <a href="https://www.linkedin.com/in/aabha-vyas">linkedin</a> /
-      <a href="mailto:aabha002@gmail.com">email</a> /
-    </p>
+<body>
+<header class="intro">
+  <div class="intro-left">
+    <p class="site-name">~ Aabha Vyas ~</p>
+    <p><b>Currently:</b> Software Engineer @ CME Group, Chicago</p>
+    <p><b>Previously:</b> Computer Science @ UIUC</p>
+    <!-- Edit this line to whatever you actually like talking about. -->
+    <p class="about"><b>Talk to me about:</b> AI agent evals, carbon-aware computing, messaging infrastructure, <mark>travel photography</mark>, and <mark>Chicago</mark>.</p>
   </div>
+  <div class="intro-right">
+    <p class="clock"><span id="clock">&nbsp;</span> <span class="faint">in Chicago</span></p>
+    <ul class="side-links">
+      <li><a href="https://github.com/aabha-vyas">GitHub</a></li>
+      <li><a href="https://www.linkedin.com/in/aabha-vyas">LinkedIn</a></li>
+      <li><a href="mailto:aabha002@gmail.com">E-mail</a></li>
+    </ul>
+  </div>
+</header>
+
+<main class="work" id="work">
+  <h2>Work</h2>
+  <div class="pills" role="group" aria-label="Filter work">
+    <button class="pill on" data-filter="all">all</button>
+    <button class="pill" data-filter="projects">projects</button>
+    <button class="pill" data-filter="photos">photos</button>
+  </div>
+
+  <div class="tiles" id="tiles">
+    <a class="tile" data-kind="projects" href="sectriage.html">
+      <div class="poster sec">
+        <div class="name">SecTriage</div>
+        <pre>recall   92-100%
+false +  0 in 40 runs
+cost     ~$0.0045 / run</pre>
+      </div>
+      <p class="tile-cap">SecTriage <span class="tag">Fall 2026</span></p>
+    </a>
+    <a class="tile" data-kind="projects" href="greenboinc.html">
+      <div class="poster green">
+        <div class="name">GreenBOINC</div>
+        <pre>combined  18% less CO2
+where     15.9%
+when      up to 12.5%</pre>
+      </div>
+      <p class="tile-cap">GreenBOINC <span class="tag">Fall 2025</span></p>
+    </a>
+    <a class="tile" data-kind="projects" href="recipes.html">
+      <div class="poster recipe">
+        <div class="name">Recipe Recommender</div>
+        <pre>tf-idf    title + ingredients
+match     cosine similarity
+rank      70% similar, 30% simpler</pre>
+      </div>
+      <p class="tile-cap">Recipe Recommender <span class="tag">CS 410</span></p>
+    </a>
+    <!-- photo tiles are added from photos.js -->
+  </div>
+  <footer>&copy; 2026 Aabha Vyas</footer>
 </main>
-<div class="hint">click to make a splash</div>
-<script src="ocean.js"></script>
+
+<div id="lightbox"><img alt=""><p></p></div>
+<script src="photos.js"></script>
+<script src="site.js"></script>
 </body>
 </html>
