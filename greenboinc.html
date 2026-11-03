@@ -21,88 +21,40 @@
   <article>
     <div class="page-head">
       <h1>GreenBOINC</h1>
-      <p class="sub"><span class="chip">Fall 2025</span>carbon-aware scheduling for volunteer computing &middot; Python, Flask &middot; CS 598 project with Siddesh Vijayakumar and Sri Valluri</p>
+      <p class="sub"><span class="chip">Fall 2025</span>carbon-aware scheduling for volunteer computing &middot; with Siddesh Vijayakumar and Sri Valluri</p>
     </div>
 
-    <p>BOINC is UC Berkeley's open-source volunteer computing platform. It breaks scientific workloads like astrophysics searches and molecular simulations into small tasks, and millions of donated laptops, desktops and servers run them. Cloud providers already cut emissions by scheduling work around the grid. BOINC doesn't do this at all.</p>
-    <p>GreenBOINC adds carbon-aware scheduling to BOINC. Volunteer machines run at different times and sit on different power grids, so the same work can be done with less carbon if you pick when and where it runs.</p>
+    <p>BOINC lets millions of volunteers donate spare computer time to science. It splits big research workloads into small tasks and sends them to laptops and desktops around the world. Cloud providers already schedule work around the power grid to cut emissions. BOINC doesn't do this.</p>
+    <p>GreenBOINC adds carbon-aware scheduling to BOINC. Volunteer machines run at different times and sit on different power grids, so the same work can be done with less carbon by choosing <em>when</em> and <em>where</em> it runs.</p>
 
-    <h3 class="label">why it's a different problem</h3>
-    <p>Carbon-aware systems for datacenters, like CARBON-DQN (deep RL for VM placement) and EDJC (long-term carbon budgeting across regions), assume they control the infrastructure. They can migrate jobs, scale up and down and place VMs. A volunteer network gives you none of that. Hosts come and go, the hardware varies, and each owner decides when their machine runs. GreenBOINC has to work within those limits.</p>
-
-    <h3 class="label">the signal: MOER</h3>
-    <p>MOER (marginal operating emissions rate) measures the emissions from the <em>next</em> unit of electricity drawn from the grid. A low-MOER period is a "clean window." Running work in clean windows is the idea behind both schedulers.</p>
+    <p><a href="assets/greenboinc-paper.pdf">read the paper (PDF)</a></p>
 
     <h3 class="label">how it works</h3>
     <div class="box">
-      <h3 class="label">temporal shifting: when to run</h3>
-      <p>A local Flask server wraps the BOINC client API on each volunteer machine. Every hour it pulls the MOER forecast for the machine's grid region from the WattTime API, averaged to hourly slots, and picks the cleanest hours. If a volunteer wants to donate, say, 30% of the day, the scheduler puts that 30% in the lowest-MOER hours instead of whenever the machine happens to be idle.</p>
+      <h3 class="label">when: temporal shifting</h3>
+      <p>Each volunteer chooses how much of the day to donate. GreenBOINC checks the carbon forecast for their grid and runs BOINC during the cleanest hours instead of whenever the machine is idle.</p>
     </div>
     <div class="box">
-      <h3 class="label">spatial shifting: where to run</h3>
-      <p>A central coordinator collects "votes" from clients: each client's average grid emissions, its uptime and the projects it can run. We benchmarked the power draw of six BOINC projects on our own hardware. They ranged from 34 W (Moo! Wrapper) to 137 W (PrimeGrid Genefer). The coordinator solves a min-cost-flow problem with Google OR-Tools. Projects supply work weighted by votes and uptime, clients take work up to their uptime, and each unit costs task wattage &times; the client's emissions. Every project still gets its requested runtime, but power-hungry tasks go to clients on cleaner grids.</p>
+      <h3 class="label">where: locality shifting</h3>
+      <p>A central coordinator knows which projects each volunteer can run and how clean their grid is. It sends the most power-hungry tasks to volunteers on cleaner grids while every project still gets the compute time it asked for.</p>
     </div>
 
     <h3 class="label">results</h3>
     <div class="stats">
-      <div class="stat"><div class="n">~27%</div><div class="l">lower carbon intensity running half the day in the cleanest hours (a year of California grid data)</div></div>
-      <div class="stat"><div class="n">~23%</div><div class="l">saved by spatial shifting across 500 simulated clients</div></div>
-      <div class="stat"><div class="n">16-19%</div><div class="l">saved by spatial shifting with real per-country grid data</div></div>
+      <div class="stat"><div class="n">18%</div><div class="l">lower emissions with both schedulers, at 75% uptime</div></div>
+      <div class="stat"><div class="n">15.9%</div><div class="l">from choosing where tasks run</div></div>
+      <div class="stat"><div class="n">up to 12.5%</div><div class="l">from choosing when they run, at 75% uptime</div></div>
     </div>
-
-    <div class="box alt">
-      <h3 class="label">temporal: percent saved vs. daily uptime</h3>
-      <div class="bar-row"><span>1 hr/day (4%)</span><div class="track"><div class="fill agent" style="width:100%">~62%</div></div></div>
-      <div class="bar-row"><span>6 hr/day (25%)</span><div class="track"><div class="fill agent" style="width:80%">~50%</div></div></div>
-      <div class="bar-row"><span>12 hr/day (50%)</span><div class="track"><div class="fill agent" style="width:44%">~27%</div></div></div>
-      <div class="bar-row"><span>18 hr/day (75%)</span><div class="track"><div class="fill agent" style="width:16%">~10%</div></div></div>
-      <div class="bar-row"><span>24 hr/day</span><div class="track"><div class="fill scan" style="width:3%">0%</div></div></div>
-      <p class="note">365 days of hourly WattTime historical MOER for Northern California (CAISO_NORTH), from December 2024 to November 2025. Each bar compares the average MOER of the cleanest hours with the day's average. The less a machine runs, the more choice the scheduler has, so savings are highest at low uptime. California's midday solar creates large daily swings, so a grid with flatter emissions would see smaller gains.</p>
-    </div>
-
-    <div class="box alt">
-      <h3 class="label">spatial: synthetic grids</h3>
-      <table class="results">
-        <tr><th>chance a client supports each project</th><th>% saved</th></tr>
-        <tr><td>25%</td><td>~7%</td></tr>
-        <tr><td>50%</td><td>~19%</td></tr>
-        <tr><td>75%</td><td>~22%</td></tr>
-        <tr><td>100%</td><td>~23%</td></tr>
-      </table>
-      <table class="results">
-        <tr><th>client emissions range (gCO<sub>2</sub>/kWh)</th><th>% saved</th></tr>
-        <tr><td>20&ndash;500</td><td>~24%</td></tr>
-        <tr><td>100&ndash;500</td><td>~17%</td></tr>
-        <tr><td>200&ndash;500</td><td>~11%</td></tr>
-        <tr><td>300&ndash;500</td><td>~6%</td></tr>
-        <tr><td>400&ndash;500</td><td>~3%</td></tr>
-      </table>
-      <p class="note">500 simulated clients, each given a random grid intensity in the range shown, with the 20&ndash;500 bounds taken from Electricity Maps. Savings grow when clients can run more kinds of projects and when their grids differ more, so a large, varied volunteer pool matters.</p>
-    </div>
-
-    <div class="box alt">
-      <h3 class="label">spatial: real per-country grids</h3>
-      <table class="results">
-        <tr><th>clients placed like</th><th>votes</th><th>% saved</th></tr>
-        <tr><td>BOINC volunteers</td><td>equal</td><td>~19%</td></tr>
-        <tr><td>internet users</td><td>equal</td><td>~17%</td></tr>
-        <tr><td>BOINC volunteers</td><td>by project popularity</td><td>~16%</td></tr>
-        <tr><td>internet users</td><td>by project popularity</td><td>~13%</td></tr>
-      </table>
-      <p class="note">500 clients placed in countries in proportion to either BOINC activity or internet users, each using that country's average grid carbon intensity. Votes were either split equally across projects or weighted by each project's real user count. Rows assume every client can run every project. At a 20% chance of supporting each project, savings drop to 2&ndash;5%.</p>
-    </div>
+    <p>Results come from a simulation of 500 volunteers placed where BOINC's computing actually happens, using a year of real grid data. The less of the day volunteers donate, the more room there is to pick clean hours: savings reach 22% at 50% uptime.</p>
+    <p>Where a volunteer lives matters a lot. Timing alone saves 12.5% in the Netherlands but under 1% in Iceland, whose grid is already clean all day.</p>
 
     <h3 class="label">limits</h3>
     <ul class="clean">
-      <li>Temporal results cover one grid region, Northern California, which has unusually large daily swings.</li>
-      <li>Spatial results come from simulation, not live volunteers. The real-country runs use annual average intensity per country, not live marginal rates.</li>
-      <li>The simulations are randomized, so reruns vary by up to a few percentage points.</li>
-      <li>The two schedulers were tested separately, not together.</li>
+      <li>Scheduling decisions come from the real system, but task execution and emissions are simulated.</li>
+      <li>It assumes sub-projects can be picked automatically, which BOINC doesn't support yet.</li>
     </ul>
 
-    <h3 class="label">next</h3>
-    <p>Merge the temporal and spatial schedulers into one tool and drive spatial shifting with live marginal emissions instead of annual averages.</p>
-
+    <p>Methods, setup and full results are in <a href="assets/greenboinc-paper.pdf">the paper</a>.</p>
     <a class="back" href="projects.html">&larr; back to projects</a>
   </article>
   <footer>&copy; 2026 Aabha Vyas</footer>
