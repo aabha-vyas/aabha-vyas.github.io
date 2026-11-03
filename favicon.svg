@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- jasmine flower -->
+  <g fill="#5f9a4a">
+    <path d="M30 40 C 20 46, 10 52, 4 60 C 16 58, 26 52, 32 44 Z"/>
+    <path d="M36 42 C 44 48, 52 52, 60 54 C 54 46, 46 42, 38 40 Z"/>
+  </g>
+  <g transform="translate(32 30)" fill="#ffffff" stroke="#a9bd94" stroke-width="2.2" stroke-linejoin="round">
+    <path id="p" d="M0 0 C 10 -6, 12 -19, 3 -27 C -5 -23, -9 -10, 0 0 Z"/>
+    <use href="#p" transform="rotate(72)"/>
+    <use href="#p" transform="rotate(144)"/>
+    <use href="#p" transform="rotate(216)"/>
+    <use href="#p" transform="rotate(288)"/>
+  </g>
+  <circle cx="32" cy="30" r="3.6" fill="#f2d36b" stroke="#d9b54a" stroke-width="1"/>
+</svg>
