@@ -13,6 +13,9 @@
 }
 
 * { box-sizing: border-box; }
+/* jasmine cursor; the click point is the flower's center */
+html, body { cursor: url("favicon-32.png") 16 15, auto; }
+a, button, .pill, .grid figure, #lightbox, [role="button"] { cursor: url("favicon-32.png") 16 15, pointer; }
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
@@ -51,7 +54,7 @@ mark { background: var(--mark); color: inherit; padding: 1px 3px; }
 .work h2 { font-size: 30px; font-weight: 400; margin: 38px 0 30px; }
 .pills { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
 .pill {
-  font: inherit; font-size: 14px; color: var(--text); background: transparent; cursor: pointer;
+  font: inherit; font-size: 14px; color: var(--text); background: transparent;
   border: 1px solid var(--line); border-radius: 99px; padding: 2px 13px;
 }
 .pill:hover { border-color: var(--text); }
@@ -122,12 +125,12 @@ table.results th { color: var(--dim); font-weight: 400; }
 
 /* gallery */
 .grid { column-count: 3; column-gap: 18px; padding-bottom: 70px; }
-.grid figure { margin: 0 0 18px; break-inside: avoid; cursor: zoom-in; }
+.grid figure { margin: 0 0 18px; break-inside: avoid; }
 .grid img { width: 100%; }
 .grid figcaption { font-size: 13px; color: var(--dim); padding-top: 6px; }
 .empty { color: var(--dim); padding: 30px 0 80px; }
 #lightbox { position: fixed; inset: 0; z-index: 20; background: rgba(255, 255, 255, .96); display: none;
-  align-items: center; justify-content: center; flex-direction: column; padding: 20px; cursor: zoom-out; }
+  align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
 #lightbox.open { display: flex; }
 #lightbox img { max-height: 84vh; max-width: 94vw; }
 #lightbox p { margin: 12px 0 0; font-size: 14px; }
