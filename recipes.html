@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Recipe Recommender | Aabha Vyas</title>
-<meta name="description" content="A content-based recipe recommender using TF-IDF, cosine similarity and preference-aware ranking.">
+<meta name="description" content="A content-based recipe recommender with offline evaluation and a learned health score.">
 <script src="theme.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,43 +26,40 @@
   <article>
     <div class="page-head">
       <h1>Recipe Recommender</h1>
-      <p class="sub"><span class="chip">CS 410</span>content-based recommendation with NLP &middot; Python, scikit-learn, NLTK &middot; with Priscilla Yuan</p>
+      <p class="sub"><span class="chip">CS 410</span>content-based recommendation &middot; Python, scikit-learn, sentence embeddings</p>
     </div>
 
-    <p>Most recipe search matches keywords. We built a recommender that starts from a recipe you already like and finds similar ones, then re-ranks them by what you care about: fewer ingredients, fewer steps or a healthier dish.</p>
-    <p>It's a content-based recommender. Each recipe becomes a vector built from its own text, and recommendations come from how close those vectors are. No user ratings are needed.</p>
+    <p>Pick a recipe you like and it finds similar ones, then re-ranks them by what you care about: fewer ingredients, fewer steps or a healthier dish. It works from the recipes' own text across 25,000 recipes, with no user ratings needed.</p>
+    <p>It started as my CS 410 project, where I judged results by reading them. I rebuilt it as a machine learning project so every change is measured.</p>
+
+    <p><a href="https://github.com/aabha-vyas/recipe-recommender">view the code</a></p>
 
     <h3 class="label">how it works</h3>
     <div class="box">
-      <h3 class="label">1. clean the text</h3>
-      <p>We removed duplicate recipes, stripped measurements like "1 cup" and "3 tbsp," and joined multi-word ingredients into single tokens, so "soy sauce" becomes <code>soy_sauce</code> and isn't confused with other sauces. Cooking steps were split into sentences with NLTK.</p>
+      <h3 class="label">find similar recipes</h3>
+      <p>Each recipe's title, ingredients and cooking steps become vectors. I compared three ways to build them (TF-IDF, LSA and pretrained sentence embeddings) and tuned how much each part counts on one set of recipes, then scored the result on a separate set.</p>
     </div>
     <div class="box">
-      <h3 class="label">2. turn recipes into vectors</h3>
-      <p>Each recipe's title and ingredients become a TF-IDF vector with single words and word pairs. TF-IDF boosts distinctive ingredients like salmon or ginger and downweights ones every recipe has, like salt and oil. A second TF-IDF vector covers the cooking steps.</p>
-    </div>
-    <div class="box">
-      <h3 class="label">3. find and rank matches</h3>
-      <p>Cosine similarity finds the 50 closest recipes, weighted 85% on ingredients and 15% on steps. Those candidates are then re-ranked by a blend of 70% similarity and 30% the user's preference, so a slightly less similar recipe can win if it's much simpler.</p>
-    </div>
-    <div class="box">
-      <h3 class="label">4. explain the results</h3>
-      <p>Each recommendation shows a 0&ndash;100 match score, the ingredients it adds that your recipe doesn't have, and a two-sentence summary of the steps. The summary picks the sentences with the highest TF-IDF scores.</p>
+      <h3 class="label">re-rank and explain</h3>
+      <p>The closest matches are re-ranked by your preference. Each result shows the ingredients it adds that your recipe doesn't have and a two-sentence summary of the steps.</p>
     </div>
 
-    <h3 class="label">what we learned</h3>
-    <ul class="clean">
-      <li>Raw cosine scores for good matches only reached about 0.20&ndash;0.40, which looks weak to users, so we show a match bar and a 0&ndash;100 score instead.</li>
-      <li>Duplicates survived basic cleaning and filled results with the same recipe, so we also removed recipes with identical ingredients and steps after parsing.</li>
-      <li>Ingredient lists were messy: separators varied, and small items like salt and pepper often showed up in the directions instead.</li>
-    </ul>
+    <h3 class="label">results</h3>
+    <div class="stats">
+      <div class="stat"><div class="n">+29%</div><div class="l">better matches than the course version (nDCG@10 0.363 &rarr; 0.470)</div></div>
+      <div class="stat"><div class="n">0.80</div><div class="l">ROC-AUC for the learned health score, vs. 0.67 for keywords</div></div>
+      <div class="stat"><div class="n">25,021</div><div class="l">unique recipes, merged from 62,126 rows</div></div>
+    </div>
+    <p>The biggest gain came from tuning, not a fancier model: re-weighting the same TF-IDF features got most of the way there, and the tuned weights lean heavily on cooking steps. How a recipe is cooked separates a stew from a soup better than its ingredients do.</p>
+    <p>The health score is now a classifier that reads only the ingredients. It learned that butter, cheese and cream push a recipe away from health categories, and that vegetables, whole wheat and nonfat items push toward them.</p>
 
     <h3 class="label">limits</h3>
     <ul class="clean">
-      <li>We judged recommendations by reading them. We didn't measure them against labeled data.</li>
-      <li>The healthiness score is a simple keyword count, not real nutrition data.</li>
+      <li>A match counts as relevant if it shares a subcategory with your recipe, which stands in for whether a person would like it.</li>
+      <li>The health score ranks recipes by how they're tagged. It isn't nutrition advice.</li>
     </ul>
 
+    <p>Full results and methods are in the <a href="https://github.com/aabha-vyas/recipe-recommender">README</a>.</p>
     <a class="back" href="projects.html">&larr; back to projects</a>
   </article>
   <footer>&copy; 2026 Aabha Vyas</footer>
